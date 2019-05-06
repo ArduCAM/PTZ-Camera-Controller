@@ -10,5 +10,14 @@
 
 ## FocuserExample.py
 * zoom-lens controller.
+## Download the source code 
+```bash
+git clone https://github.com/ArduCAM/PTZ-Camera-Controller.git
+```
+## Run the FocuserExample.py
+```bash
+  cd PTZ-Camera-Controller/
+  python FocuserExample.py
+```
 
 ![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/blob/master/Arducam%20Controller.png)
