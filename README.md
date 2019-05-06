@@ -10,4 +10,5 @@
 
 ## FocuserExample.py
 * zoom-lens controller.
-![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/blob/master/Arducam Controller.png)
+
+![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/blob/master/Arducam%20Controller.png)
