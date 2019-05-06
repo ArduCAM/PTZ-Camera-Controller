@@ -21,3 +21,8 @@ git clone https://github.com/ArduCAM/PTZ-Camera-Controller.git
 ```
 
 ![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/blob/master/Arducam%20Controller.png)
+
+### Refering the link to get more information about the PTZ-Camera-Controller
+```bash
+http://www.arducam.com/docs/cameras-for-raspberry-pi/ptz-camera/
+```
