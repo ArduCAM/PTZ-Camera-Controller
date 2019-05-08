@@ -1,3 +1,5 @@
+##Hardware Conncetion
+![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/data/blob/master/HardwareConnection.jpg)
 ## Focuser.py
 * zoom-lens basic control component.
 
@@ -16,11 +18,11 @@ git clone https://github.com/ArduCAM/PTZ-Camera-Controller.git
 ```
 ## Run the FocuserExample.py
 ```bash
-  cd PTZ-Camera-Controller/
+  cd PTZ-Camera-Controller/pyCode
   python FocuserExample.py
 ```
 
-![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/blob/master/Arducam%20Controller.png)
+![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/data/blob/master/Arducam%20Controller.png)
 
 ### Refering the link to get more information about the PTZ-Camera-Controller
 ```bash
