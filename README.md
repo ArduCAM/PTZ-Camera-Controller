@@ -1,4 +1,4 @@
-##Hardware Conncetion
+## Hardware Conncetion
 ![Alt text](https://github.com/ArduCAM/PTZ-Camera-Controller/blob/master/data/HardwareConnection.png)
 ## Focuser.py
 * zoom-lens basic control component.
