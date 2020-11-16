@@ -210,14 +210,17 @@ def draw_menu(stdscr,camera):
 
 def main():
     #open camera
-    camera = picamera.PiCamera()
+    camera = picamera.PiCamera(resolution=(640,480))
     #open camera preview
-    camera.start_preview()
+
     #set camera resolution to 640x480(Small resolution for faster speeds.)
     
-    print(picamera.PiCamera.AWB_MODES)
+   # print(picamera.PiCamera.AWB_MODES)
     
-    camera.resolution = (640, 480)
+    #camera.resolution = (320, 240)
+    camera.preview_fullscreen=False
+    preview=camera.start_preview()
+    preview.window=(0,0,800,600)
     #camera.awb_mode='greyworld'
     #Add awb greyworld mode
     mp=camera._camera.control.params[65536+5]
