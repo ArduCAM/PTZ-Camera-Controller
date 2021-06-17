@@ -215,6 +215,10 @@ def main():
     camera.start_preview()
     #set camera resolution to 640x480(Small resolution for faster speeds.)
     camera.resolution = (640, 480)
+    # https://picamera.readthedocs.io/en/release-1.13/recipes1.html?highlight=shutter%20speed#capturing-consistent-images
+    # camera.iso = 100
+    # camera.shutter_speed = camera.exposure_speed
+    # camera.exposure_mode = 'off'
 
     curses.wrapper(draw_menu,camera)
 

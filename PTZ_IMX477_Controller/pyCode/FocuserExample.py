@@ -226,6 +226,12 @@ def main():
     mp=camera._camera.control.params[65536+5]
     mp.value =10
     camera._camera.control.params[65536+5]=mp
+
+    # https://picamera.readthedocs.io/en/release-1.13/recipes1.html?highlight=shutter%20speed#capturing-consistent-images
+    # camera.iso = 100
+    # camera.shutter_speed = camera.exposure_speed
+    # camera.exposure_mode = 'off'
+
     curses.wrapper(draw_menu,camera)
 
     camera.stop_preview()
