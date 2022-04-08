@@ -18,11 +18,11 @@ git clone https://github.com/ArduCAM/PTZ-Camera-Controller.git
 * python3 -m pip install ./libcamera-1.0.2-cp39-cp39-linux_armv7l.whl
 
 ## Add camera
-Edit the configuration file: sudo nano /boot/config.txt
-Find the line: camera_auto_detect=1, update it to:camera_auto_detect=0
-imx219 camera added: dtoverlay=imx219
-imx477 camera added: dtoverlay=imx477
-Save and reboot
+* Edit the configuration file: sudo nano /boot/config.txt
+* Find the line: camera_auto_detect=1, update it to:camera_auto_detect=0
+* imx219 camera added: dtoverlay=imx219
+* imx477 camera added: dtoverlay=imx477
+* Save and reboot
 
 ## Enable i2c
 * cd PTZ-Camera-Controller
