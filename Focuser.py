@@ -34,18 +34,20 @@ class Focuser:
     OPT_MOTOR_Y = OPT_BASE | 0x04
     OPT_IRCUT   = OPT_BASE | 0x05
     opts = {
-        OPT_FOCUS : {
+        # OPT_FOCUS : {
+        OPT_ZOOM  : {
             "REG_ADDR" : 0x01,
             "MIN_VALUE": 0,
-            "MAX_VALUE": 20000,
+            "MAX_VALUE": 200,
             "DEF_VALUE": 0,
             "RESET_ADDR": 0x01 + 0x0A,
         },
-        OPT_ZOOM  : {
+        # OPT_ZOOM  : {
+        OPT_FOCUS : {    
             "REG_ADDR" : 0x00,
-            "MIN_VALUE" : 5000,
-            "MAX_VALUE": 18000,
-            "DEF_VALUE": 5000,
+            "MIN_VALUE" : 0,
+            "MAX_VALUE": 200,
+            "DEF_VALUE": 0,
             "RESET_ADDR": 0x00 + 0x0A,
         },
         OPT_MOTOR_X : {
@@ -110,7 +112,7 @@ def test():
     focuser = Focuser(7)
     focuser.set(Focuser.OPT_FOCUS, 0)
     time.sleep(3)
-    focuser.set(Focuser.OPT_FOCUS, 1000)
+    focuser.set(Focuser.OPT_FOCUS, 0)
     time.sleep(3)
     focuser.reset(Focuser.OPT_FOCUS)
 
