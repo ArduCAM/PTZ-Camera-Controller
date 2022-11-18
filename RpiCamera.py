@@ -32,7 +32,7 @@ class Camera():
             self.cam.close()
     def capture_and_preview_thread(self,width,length):
         self.cam = Picamera2()
-        self.cam.configure(self.cam.create_still_configuration(main={"size": (width, length),"format": "BGR888"}))
+        self.cam.configure(self.cam.create_still_configuration(main={"size": (width, length),"format": "RGB888"}))
         self.cam.start()
         while self.is_running == True:
             buf = self.cam.capture_array()
