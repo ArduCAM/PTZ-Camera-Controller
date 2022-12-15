@@ -38,7 +38,7 @@ class Focuser:
         OPT_ZOOM  : {
             "REG_ADDR" : 0x01,
             "MIN_VALUE": 0,
-            "MAX_VALUE": 200,
+            "MAX_VALUE": 20000,
             "DEF_VALUE": 0,
             "RESET_ADDR": 0x01 + 0x0A,
         },
@@ -46,7 +46,7 @@ class Focuser:
         OPT_FOCUS : {    
             "REG_ADDR" : 0x00,
             "MIN_VALUE" : 0,
-            "MAX_VALUE": 200,
+            "MAX_VALUE": 20000,
             "DEF_VALUE": 0,
             "RESET_ADDR": 0x00 + 0x0A,
         },
