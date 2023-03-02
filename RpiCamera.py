@@ -48,6 +48,6 @@ class Camera():
 if __name__ == "__main__":
     tmp = Camera()
     
-    tmp.start()
+    tmp.start_preview()
     time.sleep(5)
-    tmp.stop()
+    tmp.stop_preview()

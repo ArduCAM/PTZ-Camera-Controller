@@ -33,7 +33,7 @@ import curses
 global image_count
 image_count = 0
 global camera_motor_step 
-camera_motor_step = 20
+camera_motor_step = 2000
 # Rendering status bar
 def RenderStatusBar(stdscr):
     height, width = stdscr.getmaxyx()
@@ -110,8 +110,7 @@ def parseKeyByMap(stdscr,k,focuser:Focuser,auto_focus,camera):
     global image_count
     # global auto_focus_map
     motor_step  = 5
-    # zoom_step= 32
-    focus_step  = 1
+    focus_step  = 100
     if k == ord('s'):
         focuser.set(Focuser.OPT_MOTOR_Y,focuser.get(Focuser.OPT_MOTOR_Y) + motor_step)
     elif k == ord('w'):
@@ -124,12 +123,12 @@ def parseKeyByMap(stdscr,k,focuser:Focuser,auto_focus,camera):
         focuser.reset(Focuser.OPT_FOCUS)
         focuser.reset(Focuser.OPT_ZOOM)
     elif k == curses.KEY_UP:
-        auto_focus   = auto_focus + 1  if auto_focus + 1 < 11 else 10
+        auto_focus   = (auto_focus + 1)%11
         focuser.set(Focuser.OPT_ZOOM,auto_focus * camera_motor_step)
         focuser.set(Focuser.OPT_FOCUS,auto_focus_map[str(auto_focus)])
         return auto_focus
     elif k == curses.KEY_DOWN:
-        auto_focus   = auto_focus - 1  if auto_focus - 1 > 0 else 1
+        auto_focus   = auto_focus - 1  if auto_focus - 1 > 0 else 0
         focuser.set(Focuser.OPT_ZOOM,auto_focus * camera_motor_step)
         focuser.set(Focuser.OPT_FOCUS,auto_focus_map[str(auto_focus)])
         return auto_focus
@@ -150,9 +149,9 @@ def parseKeyByMap(stdscr,k,focuser:Focuser,auto_focus,camera):
         image_count += 1
     elif k == ord('f') or k == ord('F'):
         genFocusMap(stdscr,focuser,camera)
-    if(str(auto_focus) in auto_focus_map):
-        with open("./record_log.json","a+") as dump_f:
-            dump_f.write("{0}-{1}\n".format(str(auto_focus),auto_focus_map[str(auto_focus)]))
+    # if(str(auto_focus) in auto_focus_map):
+    #     with open("./record_log.json","a+") as dump_f:
+    #         dump_f.write("{0}-{1}\n".format(str(auto_focus),auto_focus_map[str(auto_focus)]))
 
 def genFocusMap(stdscr,focuser,camera):
     stdscr.clear()
@@ -166,9 +165,9 @@ def genFocusMap(stdscr,focuser,camera):
 
 def getFocusMap(focuser:Focuser,camera:Camera,stdscr):
     # zoom_step = 20000
-    focus_step = 10
+    focus_step = 1000 
     focus_Map = {}
-    for i in range(1,11,1):
+    for i in range(0,11,1):
         focuser.set(Focuser.OPT_ZOOM,i*camera_motor_step)
         maxVal = 0
         curFocus = 0
@@ -192,14 +191,14 @@ def getFocusMap(focuser:Focuser,camera:Camera,stdscr):
     return focus_Map
 
 def focusMapFine(camera:Camera,fcr:Focuser,max_laplacian_index):
-    beg =  max_laplacian_index-10 if max_laplacian_index-10>0 else 0
-    end = max_laplacian_index+10 if max_laplacian_index+10<200 else 200
+    beg =  max_laplacian_index-1000 if max_laplacian_index-1000>0 else 0
+    end = max_laplacian_index+1000 if max_laplacian_index+1000<20000 else 20000
     maxVal = 0
-    for i in range(beg,end,1):
+    curFocus = 0
+    for i in range(beg,end,100):
         fcr.set(Focuser.OPT_FOCUS,i)
         fcr.waitingForFree()
-        time.sleep(0.1)
-        
+        time.sleep(0.5)
         image = camera.getFrame()
         img2gray = cv2.cvtColor(image,cv2.COLOR_RGB2GRAY)
         imageVar = cv2.Laplacian(img2gray,cv2.CV_64F).var()
@@ -279,7 +278,7 @@ def main():
     camera = Camera()
     #open camera preview
     camera.start_preview()
-
+    time.sleep(1)
     curses.wrapper(draw_menu_focus_map, camera, 1)
 
     camera.stop_preview()
