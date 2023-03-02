@@ -3,7 +3,7 @@
 
 
 ## install opencv
-* python3 -m pip install opencv-python
+* python3 -m pip install opencv-python picamera2
 * sudo apt-get install libatlas-base-dev
 * python3 -m pip install -U numpy 
 
