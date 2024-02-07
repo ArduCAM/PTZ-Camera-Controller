@@ -1,14 +1,19 @@
+# encoding: UTF-8
 '''
     Arducam programable zoom-lens controller.
+
     Copyright (c) 2019-4 Arducam <http://www.arducam.com>.
+
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
     in the Software without restriction, including without limitation the rights
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
+
     The above copyright notice and this permission notice shall be included in all
     copies or substantial portions of the Software.
+
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
     MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -23,15 +28,15 @@ import numpy as py
 import os
 import sys
 import time
-import argparse
 from RpiCamera import Camera
 
 from Focuser import Focuser
-# from AutoFocus import AutoFocus
+from AutoFocus import AutoFocus
 import curses
 
 global image_count
 image_count = 0
+
 # Rendering status bar
 def RenderStatusBar(stdscr):
     height, width = stdscr.getmaxyx()
@@ -47,8 +52,8 @@ def RenderDescription(stdscr):
     motor_x_desc    = "MotorX   : 'w'-'s' Key"
     motor_y_desc    = "MotorY   : 'a'-'d' Key"
     ircut_desc      = "IRCUT    : Space"
+    autofocus_desc  = "Autofocus: Enter"
     snapshot_desc   = "Snapshot : 'c' Key"
-
 
     desc_y = 1
     
@@ -57,6 +62,7 @@ def RenderDescription(stdscr):
     stdscr.addstr(desc_y + 3, 0, motor_x_desc, curses.color_pair(1))
     stdscr.addstr(desc_y + 4, 0, motor_y_desc, curses.color_pair(1))
     stdscr.addstr(desc_y + 5, 0, ircut_desc, curses.color_pair(1))
+    stdscr.addstr(desc_y + 6, 0, autofocus_desc, curses.color_pair(1))
     stdscr.addstr(desc_y + 7, 0, snapshot_desc, curses.color_pair(1))
 # Rendering  middle text
 def RenderMiddleText(stdscr,k,focuser):
@@ -73,7 +79,8 @@ def RenderMiddleText(stdscr,k,focuser):
     zoom_value  = "Zoom     : {}".format(focuser.get(Focuser.OPT_ZOOM))[:width-1]
     motor_x_val = "MotorX   : {}".format(focuser.get(Focuser.OPT_MOTOR_X))[:width-1]
     motor_y_val = "MotorY   : {}".format(focuser.get(Focuser.OPT_MOTOR_Y))[:width-1]
-    ircut_val   = "IRCUT    : {}".format(focuser.get(Focuser.OPT_IRCUT))[:width-1]   
+    ircut_val   = "IRCUT    : {}".format(focuser.get(Focuser.OPT_IRCUT))[:width-1]
+    
     if k == 0:
         keystr = "No key press detected..."[:width-1]
 
@@ -105,8 +112,6 @@ def RenderMiddleText(stdscr,k,focuser):
     stdscr.addstr(start_y + 8, start_x_device_info, motor_x_val)
     stdscr.addstr(start_y + 9, start_x_device_info, motor_y_val)
     stdscr.addstr(start_y + 10, start_x_device_info, ircut_val)
-
-
 # parse input key
 def parseKey(k,focuser,auto_focus,camera):
     global image_count
@@ -121,24 +126,25 @@ def parseKey(k,focuser,auto_focus,camera):
         focuser.set(Focuser.OPT_MOTOR_X,focuser.get(Focuser.OPT_MOTOR_X) - motor_step)
     elif k == ord('a'):
         focuser.set(Focuser.OPT_MOTOR_X,focuser.get(Focuser.OPT_MOTOR_X) + motor_step)
-    if k == ord('r'):
+    elif k == ord('r'):
         focuser.reset(Focuser.OPT_FOCUS)
         focuser.reset(Focuser.OPT_ZOOM)
-    elif k == curses.KEY_UP:
-        focuser.set(Focuser.OPT_ZOOM,focuser.get(Focuser.OPT_ZOOM) + zoom_step)
     elif k == curses.KEY_DOWN:
         focuser.set(Focuser.OPT_ZOOM,focuser.get(Focuser.OPT_ZOOM) - zoom_step)
+    elif k == curses.KEY_UP:
+        focuser.set(Focuser.OPT_ZOOM,focuser.get(Focuser.OPT_ZOOM) + zoom_step)
     elif k == curses.KEY_RIGHT:
         focuser.set(Focuser.OPT_FOCUS,focuser.get(Focuser.OPT_FOCUS) + focus_step)
     elif k == curses.KEY_LEFT:
         focuser.set(Focuser.OPT_FOCUS,focuser.get(Focuser.OPT_FOCUS) - focus_step)
+    elif k == 10:
+        auto_focus.startFocus()
+        # auto_focus.startFocus2()
+        # auto_focus.auxiliaryFocusing()
+        pass
     elif k == 32:
         focuser.set(Focuser.OPT_IRCUT,focuser.get(Focuser.OPT_IRCUT)^0x0001)
-    # elif k == 10:
-    #     auto_focus.startFocus()
-    #     # auto_focus.startFocus2()
-    #     # auto_focus.auxiliaryFocusing()
-    #     pass
+        pass
     elif k == ord('c'):
         #save image to file.
         cv2.imwrite("image{}.jpg".format(image_count), camera.getFrame())
@@ -147,10 +153,9 @@ def parseKey(k,focuser,auto_focus,camera):
 
 # Python curses example Written by Clay McLeod
 # https://gist.github.com/claymcleod/b670285f334acd56ad1c
-def draw_menu(stdscr, camera, i2c_bus):
-    focuser = Focuser(i2c_bus)
-    # auto_focus = AutoFocus(focuser,camera)
-    auto_focus = None
+def draw_menu(stdscr,camera):
+    focuser = Focuser(1)
+    auto_focus = AutoFocus(focuser,camera)
     
 
     k = 0
@@ -196,13 +201,12 @@ def draw_menu(stdscr, camera, i2c_bus):
         k = stdscr.getch()
 
 def main():
-
     #open camera
     camera = Camera()
     #open camera preview
     camera.start_preview()
 
-    curses.wrapper(draw_menu, camera, 1)
+    curses.wrapper(draw_menu,camera)
 
     camera.stop_preview()
     camera.close()
