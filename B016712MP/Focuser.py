@@ -173,7 +173,7 @@ class Focuser:
             "RESET_ADDR": None,
         },
         OPT_RESET : {
-            "REG_ADDR" : 0x10, 
+            "REG_ADDR" : 0x11, 
             "MIN_VALUE": 0x00,
             "MAX_VALUE": 0x01,   #0x0001 open, 0x0000 close
             "RESET_ADDR": None,
@@ -233,7 +233,7 @@ class Focuser:
         self.waitingForFree()
         data = self.read_block(self.CHIP_I2C_ADDR,0x50)
         self.waitingForFree()
-        data += self.read_block(self.CHIP_I2C_ADDR,0x51)
+        data += self.read_block(self.CHIP_I2C_ADDR,0x5b)
         map_data = []
         for i in range(0,len(data),2):
             map_data.append(data[i]<<8|data[i+1])
@@ -244,7 +244,7 @@ class Focuser:
         self.waitingForFree()
         self.write_block(self.CHIP_I2C_ADDR,0x50,data[:11])
         self.waitingForFree()
-        self.write_block(self.CHIP_I2C_ADDR,0x51,data[11:])
+        self.write_block(self.CHIP_I2C_ADDR,0x5b,data[11:])
         return 0
     
     def driver_version(self):
@@ -282,12 +282,14 @@ def test():
     # focuser.reset(Focuser.OPT_ZOOM)
     
     # print(focuser.isBusy())
-    # print(focuser.read_map())
-    # data = [2100, 2101,0,195,200,270,400,340,600,420 ,800,500,1000,610,1200,750,1400,920,1600,1150,1800,1710]
-    # focuser.write_map(data)
+    print(focuser.read_map())
+    data = [2100, 2100,0,195,200,270,400,340,600,420 ,800,500,1000,610,1200,750,1400,920,1600,1150,1800,1710]
+    # data = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]
+
+    focuser.write_map(data)
     # time.sleep(1)
     print(hex(focuser.driver_version()))
-    if focuser.driver_version() >= 0x105:
+    if focuser.driver_version() >= 0x104:
         print(focuser.read_map())
     else :
         print("firmware version too low!")

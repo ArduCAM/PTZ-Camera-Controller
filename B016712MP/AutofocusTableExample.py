@@ -156,6 +156,7 @@ def parseKeyByMap(stdscr,k,focuser:Focuser,camera):
         cv2.imwrite("image{}.jpg".format(formatted_time), camera.getFrame())
     elif k == ord('f') or k == ord('F'):
         genFocusMap(stdscr,focuser,camera)
+        focuser.waitingForFree()
         foucusMapLoad(stdscr,focuser,camera)
 
 def genFocusMap(stdscr,focuser,camera):
@@ -165,7 +166,6 @@ def genFocusMap(stdscr,focuser,camera):
     stdscr.refresh()
     focusMap = coarseAdjustment(focuser,camera,stdscr)
     focuser.write_map(focusMap)
-
     stdscr.clear()
 
 def coarseAdjustment(focuser:Focuser,camera:Camera,stdscr):
@@ -239,11 +239,13 @@ def focusReset(i2c_bus):
 
 def foucusMapLoad(stdscr,focuser,camera):
     global auto_focus_map
+    auto_focus_map.clear()
     data = focuser.read_map()
     if data[0] == 0xffff:
         focuser.set(Focuser.OPT_MODE,0x01)
         time.sleep(3)
         genFocusMap(stdscr,focuser,camera)
+        time.sleep(0.01)
         foucusMapLoad(stdscr,focuser,camera);
     else:
         focuser.opts[Focuser.OPT_ZOOM]["MAX_VALUE"] = data[0]
